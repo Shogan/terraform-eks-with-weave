@@ -1,0 +1,9 @@
+src/.terraform/*
+*.tfplan
+src/kubeconfig*
+src/config-map-aws-auth*
+src/terraform/eks/kubectl-*
+
+src/terraform.tfstate
+
+src/terraform.tfstate.backup
