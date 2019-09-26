@@ -7,3 +7,5 @@ src/terraform/eks/kubectl-*
 src/terraform.tfstate
 
 src/terraform.tfstate.backup
+
+shogan.tfvars
