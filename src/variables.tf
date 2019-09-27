@@ -29,3 +29,8 @@ variable "map_users" {
     },
   ]
 }
+
+variable "bootstrap_extra_args" {
+  description = "Extra arguments passed to the bootstrap.sh script from the EKS AMI."
+  type = "string"
+}
