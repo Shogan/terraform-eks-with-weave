@@ -5,6 +5,7 @@ terraform {
 provider "aws" {
   version = ">= 2.28.1"
   region  = var.region
+  skip_credentials_validation = true
 }
 
 provider "local" {
@@ -37,24 +38,28 @@ module "eks" {
 
   worker_groups = [
     {
-      name                          = "worker-group-1"
+      name                          = "abc-worker-group-1"
       instance_type                 = "t3a.small"
       pre_userdata                  = "${data.template_file.eks_linux_pre_user_data_template.rendered}"
       asg_desired_capacity          = 1
       additional_security_group_ids = [aws_security_group.worker_group_mgmt_one.id]
       bootstrap_extra_args          = var.bootstrap_extra_args
+      iam_instance_profile_name     = "Shogan_EKS_General_Worker"
     },
     {
-      name                          = "worker-group-2"
+      name                          = "kiam-worker-group-1"
       instance_type                 = "t3a.small"
       pre_userdata                  = "${data.template_file.eks_linux_pre_user_data_template.rendered}"
       asg_desired_capacity          = 1
       additional_security_group_ids = [aws_security_group.worker_group_mgmt_two.id]
       bootstrap_extra_args          = var.bootstrap_extra_args
+      iam_instance_profile_name     = "Shogan-Assume-All-Roles-Kiam-Eks"
+      kubelet_extra_args            = "--node-labels=kiam-server=true --register-with-taints=kiam-server=false:NoExecute"
     }
   ]
 
-  workers_additional_policies   = ["${aws_iam_policy.workers_allow_modify_ec2_attribute_policy.arn}"]
+  workers_additional_policies = ["${aws_iam_policy.workers_allow_modify_ec2_attribute_policy.arn}"]
   worker_additional_security_group_ids = [aws_security_group.all_worker_mgmt.id]
-  map_users                            = var.map_users
+  manage_worker_iam_resources = false
+  map_users                   = var.map_users
 }

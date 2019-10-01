@@ -15,3 +15,26 @@ data "aws_iam_policy_document" "workers_allow_modify_ec2_attribute" {
     resources = ["*"]
   }
 }
+
+resource "aws_iam_role" "kiam_workers_role" {
+  name = "kiam_workers_assume_all_roles"
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "ec2.amazonaws.com"
+      },
+      "Effect": "Allow",
+      "Sid": "AllowAssumeAllRoles"
+    }
+  ]
+}
+EOF
+
+}
+
+

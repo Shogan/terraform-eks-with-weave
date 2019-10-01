@@ -1,0 +1,104 @@
+agent:
+  enabled: true
+  name: agent
+  log:
+    jsonOutput: true
+    level: debug
+  gatewayTimeoutCreation: 3s
+  host:
+    iptables: true
+    port: 8181
+    # interface: "!eth0"
+    interface: "weave"
+    # interface: "cali+"
+    # interface: "eth0"
+  # prometheus:
+  #   scrape: true
+  #   port: 9620
+  #   syncInterval: 5s
+  updateStrategy: RollingUpdate
+  resources:
+    limits:
+      cpu: 300m
+      memory: 300Mi
+    requests:
+      cpu: 300m
+      memory: 300Mi
+  extraHostPathMounts:
+    - name: ssl-certs
+      mountPath: /etc/ssl/certs
+      hostPath: /etc/pki/ca-trust/extracted/pem
+      readOnly: true
+  gatewayTimeoutCreation: 200ms
+  tlsFiles:
+    ca: foo
+    cert: foo
+    key: foo
+  tlsCerts:
+    certFileName: cert
+    keyFileName: key
+    caFileName: ca
+
+server:
+  # useHostNetwork: true
+  enabled: true
+  name: server
+  log:
+    jsonOutput: true
+    level: info
+  # prometheus:
+  #   scrape: true
+  #   port: 9620
+  #   syncInterval: 5s
+  updateStrategy: RollingUpdate
+  nodeSelector:
+    kiam-server: "true"
+  tolerations:
+    - key: kiam-server
+      operator: Equal
+      value: "false"
+      effect: NoExecute
+  resources:
+    limits:
+      cpu: 300m
+      memory: 300Mi
+    requests:
+      cpu: 300m
+      memory: 300Mi
+  extraEnv:
+    - name: AWS_METADATA_SERVICE_TIMEOUT
+      value: 10s
+    - name: AWS_METADATA_SERVICE_NUM_ATTEMPTS
+      value: "5"
+  extraHostPathMounts:
+    - name: ssl-certs
+      mountPath: /etc/ssl/certs
+      hostPath: /etc/pki/ca-trust/extracted/pem
+      readOnly: true
+  service:
+    port: 443
+    targetPort: 443
+  gatewayTimeoutCreation: 300ms
+  probes:
+    serverAddress: 127.0.0.1
+  tlsFiles:
+    ca: foo
+    cert: foo
+    key: foo
+  cache:
+    syncInterval: 1m
+  tlsCerts:
+    certFileName: cert
+    keyFileName: key
+    caFileName: ca
+
+rbac:
+  create: true
+
+serviceAccounts:
+  agent:
+    create: true
+    name:
+  server:
+    create: true
+    name:

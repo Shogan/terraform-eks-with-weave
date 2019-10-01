@@ -20,6 +20,8 @@ spec:
     metadata:
       labels:
         app: hello-node1
+      annotations:
+        iam.amazonaws.com/role: shogan-s3-readonly-full-access
     spec:
       containers:
       - image: shoganator/helloenv:1.0.0
